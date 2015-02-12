@@ -26,8 +26,7 @@ function io_changes {
         local new_version=$FUTURE_DEVELOP_VERSION
         update_versions $new_version
         echo add_version_snapshot $new_version
-        local expected_rpm_version_if_adding=$RELEASE_VERSION
-        add_version_snapshot $new_version $expected_rpm_version_if_adding
+        add_version_snapshot $new_version $RELEASE_VERSION
     fi
 }
 
