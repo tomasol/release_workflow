@@ -118,12 +118,12 @@ function push_develop_and_delete_release_branch {
     git branch -d $RELEASE_BRANCH
 }
 
-function update_hotfix_branch {
+function checkout_hotfix_branch_from_master {
     git checkout master
     git checkout -B $HOTFIX_BRANCH
+}
 
-    update_versions "${FUTURE_HOTFIX_VERSION}"
-    add_version_snapshot $FUTURE_HOTFIX_VERSION $RELEASE_VERSION
+function commit_hotfix_branch {
     commit_changes "$(bump_to_future_hotfix_message)"
     git push $ORIGIN_BRANCH $HOTFIX_BRANCH
 }

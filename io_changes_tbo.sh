@@ -1,14 +1,24 @@
 #!/bin/bash
 
+function check_current_version {
+    local expected_version=$1
+    local xpath='/*[local-name()="project"]/*[local-name()="version"]/text()'
+    local actual_version=`xmllint --xpath "$xpath" $GIT_ROOT/_ASSEMBLY_/Install/rpm/pom.xml`
+    if [ $actual_version != $expected_version ] ; then
+        exit_safe 99 "Unexpected version $actual_version , expected was $expected_version"
+    fi
+}
+
 function check_compile {
     cd $GIT_ROOT/_ASSEMBLY_/Build
     mvn clean install -T 3 -e
-
+    assert_success
     cd $GIT_ROOT/_ASSEMBLY_/Install/rpm
     mvn clean install -T 3 -e
-
+    assert_success
     cd $GIT_ROOT/WRMI
     grails compile
+    assert_success
 }
 
 function io_changes {
@@ -42,6 +52,12 @@ function update_versions {
     cd $GIT_ROOT/WRMI
     sed -i 's/^app.version.*/app.version='$new_version'/' application.properties
     sed -i 's/^version.tbo.*/version.tbo = "'$new_version'"/' grails-app/conf/BuildConfig.groovy
+}
+
+function io_hotfix_changes {
+    assert_current_branch_name $HOTFIX_BRANCH
+    update_versions "${FUTURE_HOTFIX_VERSION}"
+    add_version_snapshot $FUTURE_HOTFIX_VERSION $RELEASE_VERSION
 }
 
 # private

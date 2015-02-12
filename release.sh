@@ -31,4 +31,6 @@ commit_changes "$(bump_to_future_develop_message)"
 merge_release_branch_to "develop"
 push_develop_and_delete_release_branch
 
-update_hotfix_branch
+checkout_hotfix_branch_from_master
+io_hotfix_changes
+commit_hotfix_branch

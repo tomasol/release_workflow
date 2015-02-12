@@ -37,6 +37,12 @@ function update_versions {
     mvn -o versions:set -DnewVersion=$new_version versions:commit
 }
 
+function io_hotfix_changes {
+    assert_current_branch_name $HOTFIX_BRANCH
+    update_versions "${FUTURE_HOTFIX_VERSION}"
+    add_version_snapshot $FUTURE_HOTFIX_VERSION $RELEASE_VERSION
+}
+
 # private
 function remove_version_snapshot {
     local expected_rpm_version=$1
