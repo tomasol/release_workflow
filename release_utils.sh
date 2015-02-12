@@ -94,6 +94,7 @@ function create_release_branch {
 function commit_changes() {
     local message=$1
     git commit -a -m "$message"
+    assert_clean_copy
 }
 
 # merge current branch to master
