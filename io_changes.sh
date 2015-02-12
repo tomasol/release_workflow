@@ -53,7 +53,7 @@ function remove_version_snapshot {
 function add_version_snapshot {
     local future_version=$1
     local expected_rpm_version=$2
-    cd $GIT_ROOT/_ASSEMBLY_/Install/rpm
+    cd $GIT_ROOT/maven
     local future_version_core=${future_version%-*}
     egrep "<rpm.version>$expected_rpm_version</rpm.version>" pom.xml
     assert_success "Expected $expected_rpm_version inside rpm.version tag"

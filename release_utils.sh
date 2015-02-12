@@ -82,7 +82,7 @@ function check_git_directories {
 function check_release_tag_does_not_exist {
     local found_tag=`git tag | grep $RELEASE_VERSION`
     if [ "$found_tag" == "$RELEASE_VERSION" ] ; then
-        exit_safe 5 "Tag $RELEASE_VERSIONN already exists, not going to release."
+        exit_safe 5 "Tag $RELEASE_VERSION already exists, not going to release."
     fi
 }
 
@@ -123,7 +123,7 @@ function update_hotfix_branch {
     git checkout -B $HOTFIX_BRANCH
 
     update_versions "${FUTURE_HOTFIX_VERSION}"
-    # add_version_snapshot ???
+    add_version_snapshot $FUTURE_HOTFIX_VERSION $RELEASE_VERSION
     commit_changes "$(bump_to_future_hotfix_message)"
     git push $ORIGIN_BRANCH $HOTFIX_BRANCH
 }
