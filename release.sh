@@ -33,4 +33,5 @@ push_develop_and_delete_release_branch
 
 checkout_hotfix_branch_from_master
 io_hotfix_changes
-commit_hotfix_branch
+commit_push_hotfix_branch
+checkout_source_branch
