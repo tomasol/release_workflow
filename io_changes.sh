@@ -26,8 +26,7 @@ function io_changes {
         local new_version=$FUTURE_DEVELOP_VERSION
         update_versions $new_version
         echo add_version_snapshot $new_version
-        local expected_rpm_version_if_adding=$RELEASE_VERSION
-        add_version_snapshot $new_version $expected_rpm_version_if_adding
+        add_version_snapshot $new_version $RELEASE_VERSION
     fi
 }
 
@@ -35,6 +34,12 @@ function update_versions {
     local new_version=$1
     cd $GIT_ROOT/maven
     mvn -o versions:set -DnewVersion=$new_version versions:commit
+}
+
+function io_hotfix_changes {
+    assert_current_branch_name $HOTFIX_BRANCH
+    update_versions "${FUTURE_HOTFIX_VERSION}"
+    add_version_snapshot $FUTURE_HOTFIX_VERSION $RELEASE_VERSION
 }
 
 # private
@@ -53,7 +58,7 @@ function remove_version_snapshot {
 function add_version_snapshot {
     local future_version=$1
     local expected_rpm_version=$2
-    cd $GIT_ROOT/_ASSEMBLY_/Install/rpm
+    cd $GIT_ROOT/maven
     local future_version_core=${future_version%-*}
     egrep "<rpm.version>$expected_rpm_version</rpm.version>" pom.xml
     assert_success "Expected $expected_rpm_version inside rpm.version tag"
