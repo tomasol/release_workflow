@@ -98,6 +98,7 @@ function commit_changes() {
 }
 
 # merge current branch to master
+# TODO: make non-interactive
 function merge_release_branch_to {
     local branch_to_be_merged_to=$1
     git checkout $branch_to_be_merged_to
