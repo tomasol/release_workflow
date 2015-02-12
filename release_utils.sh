@@ -114,6 +114,7 @@ function checkout_release_branch {
     git checkout $RELEASE_BRANCH
 }
 
+
 function push_develop_and_delete_release_branch {
     git push $ORIGIN_BRANCH develop
     git branch -d $RELEASE_BRANCH
@@ -124,7 +125,11 @@ function checkout_hotfix_branch_from_master {
     git checkout -B $HOTFIX_BRANCH
 }
 
-function commit_hotfix_branch {
+function commit_push_hotfix_branch {
     commit_changes "$(bump_to_future_hotfix_message)"
     git push $ORIGIN_BRANCH $HOTFIX_BRANCH
+}
+
+function checkout_source_branch {
+    git checkout $SOURCE_BRANCH
 }
