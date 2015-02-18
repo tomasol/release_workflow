@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ORIGIN_BRANCH=origin
+ORIGIN_REMOTE=origin
 EXPECTED_CURRENT_VERSION="2.15.1-SNAPSHOT"
 # hotfix branch does not have to exist
 HOTFIX_BRANCH="2.15.x"

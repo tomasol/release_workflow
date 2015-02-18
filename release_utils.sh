@@ -49,10 +49,10 @@ function assert_clean_copy {
     assert_success "Expected this local branch to be clean"
 }
 
-# Check that $branch is up to date with its $ORIGIN_BRANCH, expects git fetch to be called previously
+# Check that $branch is up to date with its $ORIGIN_REMOTE, expects git fetch to be called previously
 function assert_branch_is_up_to_date {
     local branch=$1
-    local last_remote_commit=`git rev-parse $ORIGIN_BRANCH/$branch`
+    local last_remote_commit=`git rev-parse $ORIGIN_REMOTE/$branch`
     local last_local_commit=`git rev-parse $branch`
     if [ $last_remote_commit != $last_local_commit ]; then
         exit_safe 9 "Remote branch has different tip than local for branch '$branch'. \n\
@@ -70,7 +70,7 @@ function check_git_directories {
         exit_safe 1 "No git root found."
     fi
     echo "Git root found: $GIT_ROOT"
-    git fetch $ORIGIN_BRANCH
+    git fetch $ORIGIN_REMOTE
     # local branch should be $SOURCE_BRANCH
     assert_current_branch_name $SOURCE_BRANCH
     assert_clean_copy
@@ -108,7 +108,7 @@ function merge_release_branch_to {
 function tag_and_push_master {
     git tag -a $RELEASE_VERSION -m "$(tag_message)"
     git push
-    git push --tags $ORIGIN_BRANCH
+    git push --tags $ORIGIN_REMOTE
 }
 
 function checkout_release_branch {
@@ -117,7 +117,7 @@ function checkout_release_branch {
 
 
 function push_develop_and_delete_release_branch {
-    git push $ORIGIN_BRANCH develop
+    git push $ORIGIN_REMOTE develop
     git branch -d $RELEASE_BRANCH
 }
 
@@ -128,7 +128,7 @@ function checkout_hotfix_branch_from_master {
 
 function commit_push_hotfix_branch {
     commit_changes "$(bump_to_future_hotfix_message)"
-    git push $ORIGIN_BRANCH $HOTFIX_BRANCH
+    git push $ORIGIN_REMOTE $HOTFIX_BRANCH
 }
 
 function checkout_source_branch {
