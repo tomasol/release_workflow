@@ -98,26 +98,28 @@ function commit_changes() {
 }
 
 # merge current branch to master
-# TODO: make non-interactive
 function merge_release_branch_to {
     local branch_to_be_merged_to=$1
     git checkout $branch_to_be_merged_to
-    git merge --no-ff $RELEASE_BRANCH
+    git merge --no-ff $RELEASE_BRANCH -m "$(merge_release_branch_message $branch_to_be_merged_to)"
+    assert_success
 }
 
 function tag_and_push_master {
     git tag -a $RELEASE_VERSION -m "$(tag_message)"
     git push
+    assert_success
     git push --tags $ORIGIN_REMOTE
+    assert_success
 }
 
 function checkout_release_branch {
     git checkout $RELEASE_BRANCH
 }
 
-
 function push_develop_and_delete_release_branch {
     git push $ORIGIN_REMOTE develop
+    assert_success
     git branch -d $RELEASE_BRANCH
 }
 
@@ -126,9 +128,9 @@ function checkout_hotfix_branch_from_master {
     git checkout -B $HOTFIX_BRANCH
 }
 
-function commit_push_hotfix_branch {
-    commit_changes "$(bump_to_future_hotfix_message)"
+function push_hotfix_branch {
     git push $ORIGIN_REMOTE $HOTFIX_BRANCH
+    assert_success
 }
 
 function checkout_source_branch {

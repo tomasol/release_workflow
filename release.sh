@@ -18,14 +18,14 @@ check_git_directories
 check_release_tag_does_not_exist
 check_current_version $EXPECTED_CURRENT_VERSION
 create_release_branch
-io_changes true
+io_create_release
 check_compile
 commit_changes "$(create_release_message)"
 merge_release_branch_to "master"
 tag_and_push_master
 
 checkout_release_branch
-io_changes false
+io_future_develop
 check_compile
 commit_changes "$(bump_to_future_develop_message)"
 merge_release_branch_to "develop"
@@ -33,5 +33,6 @@ push_develop_and_delete_release_branch
 
 checkout_hotfix_branch_from_master
 io_hotfix_changes
-commit_push_hotfix_branch
+commit_changes "$(bump_to_future_hotfix_message)"
+push_hotfix_branch
 checkout_source_branch
