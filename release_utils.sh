@@ -134,7 +134,7 @@ function checkout_source_branch {
 function push_interactive {
     local args=$*
     local current_branch_name=`git rev-parse --abbrev-ref HEAD`
-    echo "About to push '$current_branch_name'"
+    echo "About to push '$current_branch_name': git push $args"
     echo "Press Ctrl-C to stop, Ctrl-D to continue"
     cat
     git push $args
