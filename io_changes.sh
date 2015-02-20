@@ -14,20 +14,20 @@ function check_compile {
     mvn clean verify
 }
 
-function io_changes {
-    local create_release=$1
+function io_create_release {
     assert_current_branch_name $RELEASE_BRANCH
-    if [ $create_release = true ] ; then
-        local new_version=$RELEASE_VERSION
-        update_versions $new_version
-        echo remove_version_snapshot $new_version
-        remove_version_snapshot $new_version
-    else
-        local new_version=$FUTURE_DEVELOP_VERSION
-        update_versions $new_version
-        echo add_version_snapshot $new_version
-        add_version_snapshot $new_version $RELEASE_VERSION
-    fi
+    local new_version=$RELEASE_VERSION
+    update_versions $new_version
+    echo remove_version_snapshot $new_version
+    remove_version_snapshot $new_version
+}
+
+function io_future_develop {
+    assert_current_branch_name $RELEASE_BRANCH
+    local new_version=$FUTURE_DEVELOP_VERSION
+    update_versions $new_version
+    echo add_version_snapshot $new_version
+    add_version_snapshot $new_version $RELEASE_VERSION
 }
 
 function update_versions {

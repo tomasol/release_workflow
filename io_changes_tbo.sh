@@ -21,24 +21,24 @@ function check_compile {
     assert_success
 }
 
-function io_changes {
-    local create_release=$1
+function io_create_release {
     assert_current_branch_name $RELEASE_BRANCH
-    if [ $create_release = true ] ; then
-        local new_version=$RELEASE_VERSION
-        update_versions $new_version
-        echo remove_version_snapshot $new_version
-        remove_version_snapshot $new_version
-        # this might produce no change if source branch != develop:
-        change_ci_db "CI-DEVELOP" "CI-MASTER"
-    else
-        local new_version=$FUTURE_DEVELOP_VERSION
-        update_versions $new_version
-        echo add_version_snapshot $new_version
-        local expected_rpm_version_if_adding=$RELEASE_VERSION
-        add_version_snapshot $new_version $expected_rpm_version_if_adding
-        change_ci_db "CI-MASTER" "CI-DEVELOP"
-    fi
+    local new_version=$RELEASE_VERSION
+    update_versions $new_version
+    echo remove_version_snapshot $new_version
+    remove_version_snapshot $new_version
+    # this might produce no change if source branch != develop:
+    change_ci_db "CI-DEVELOP" "CI-MASTER"
+}
+
+function io_future_develop {
+    assert_current_branch_name $RELEASE_BRANCH
+    local new_version=$FUTURE_DEVELOP_VERSION
+    update_versions $new_version
+    echo add_version_snapshot $new_version
+    local expected_rpm_version_if_adding=$RELEASE_VERSION
+    add_version_snapshot $new_version $expected_rpm_version_if_adding
+    change_ci_db "CI-MASTER" "CI-DEVELOP"
 }
 
 function update_versions {
