@@ -10,14 +10,8 @@ function exit_safe {
     if [ -n "$exit_message" ]; then
         echo -e "$exit_message"
     fi
-    local path_to_bash=`which bash`
-    if [ "$path_to_bash" == $0 ]; then
-      echo "Not exitting with status code $exit_status. Press Ctrl-C to stop, Ctrl-D to ignore and continue"
-      # any command that will hang
-      cat
-    else
-      exit $exit_status
-    fi
+    echo "Failure with status code $exit_status. Press Ctrl-C to stop, Ctrl-D to ignore and continue"
+    cat
 }
 
 function assert_success {
@@ -107,9 +101,9 @@ function merge_release_branch_to {
 
 function tag_and_push_master {
     git tag -a $RELEASE_VERSION -m "$(tag_message)"
-    git push
+    push_interactive
     assert_success
-    git push --tags $ORIGIN_REMOTE
+    push_interactive --tags $ORIGIN_REMOTE
     assert_success
 }
 
@@ -118,7 +112,7 @@ function checkout_release_branch {
 }
 
 function push_develop_and_delete_release_branch {
-    git push $ORIGIN_REMOTE develop
+    push_interactive $ORIGIN_REMOTE develop
     assert_success
     git branch -d $RELEASE_BRANCH
 }
@@ -129,10 +123,19 @@ function checkout_hotfix_branch_from_master {
 }
 
 function push_hotfix_branch {
-    git push $ORIGIN_REMOTE $HOTFIX_BRANCH
+    push_interactive $ORIGIN_REMOTE $HOTFIX_BRANCH
     assert_success
 }
 
 function checkout_source_branch {
     git checkout $SOURCE_BRANCH
+}
+
+function push_interactive {
+    local args=$*
+    local current_branch_name=`git rev-parse --abbrev-ref HEAD`
+    echo "About to push '$current_branch_name'"
+    echo "Press Ctrl-C to stop, Ctrl-D to continue"
+    cat
+    git push $args
 }
