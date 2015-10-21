@@ -1,5 +1,6 @@
 #!/bin/bash
 
+set -x
 # Before running this script edit release_properties.sh,
 # update your master, develop and possibly hotfix branch.
 # Switch to $SOURCE_BRANCH, otherwise this script will exit prematurely.
