@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Do not exit if running from console
 function exit_safe {
     local exit_status=$1
     local exit_message=$2
@@ -10,8 +9,7 @@ function exit_safe {
     if [ -n "$exit_message" ]; then
         echo -e "$exit_message"
     fi
-    echo "Failure with status code $exit_status. Press Ctrl-C to stop, Ctrl-D to ignore and continue"
-    cat
+    exit 1
 }
 
 function assert_success {
@@ -135,7 +133,5 @@ function push_interactive {
     local args=$*
     local current_branch_name=`git rev-parse --abbrev-ref HEAD`
     echo "About to push '$current_branch_name': git push $args"
-    echo "Press Ctrl-C to stop, Ctrl-D to continue"
-    cat
     git push $args
 }
