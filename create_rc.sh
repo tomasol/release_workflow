@@ -16,15 +16,21 @@ source $DIR/io_changes.sh
 
 GIT_ROOT=`git rev-parse --show-toplevel`
 
+# checks start
+assert_version_ends_with $EXPECTED_CURRENT_VERSION "SNAPSHOT"
+assert_version_ends_with $FUTURE_DEVELOP_VERSION "SNAPSHOT"
 # check that we are on develop branch
 assert_current_branch_name develop
 check_git_directories
 io_check_current_version $EXPECTED_CURRENT_VERSION
+# checks end
 
 git checkout rc
 git merge develop --no-ff -m "$(create_release_candidate_message)"
-check_rc_branch
-merge_develop_to_rc_branch
+git push
 # go to develop again
-io_bump_develop
-commit_changes "$(bump_develop_message)"
+git checkout develop
+
+io_bump_develop_after_rc
+commit_changes "$(bump_to_future_develop_message)"
+git push
