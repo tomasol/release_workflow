@@ -7,11 +7,14 @@ function exit_safe {
     if [ -n "$exit_message" ]; then
         echo -e "$exit_message"
     fi
-    local path_to_bash=`which bash`
+    # hack to avoid closing of terminal when pasting functions to bash
+    local path_to_bash
+    path_to_bash=`which bash`
     if [ "$path_to_bash" == $0 ]; then
       echo "Not exitting with status code $exit_status. Press Ctrl-C to stop, Ctrl-D to ignore and continue"
       cat
     else
+      echo "Exitting with status code $exit_status."
       exit $exit_status
     fi
 }
@@ -24,7 +27,7 @@ function assert_success {
         error_message="Last command failed"
     fi
     if [ -z "$intended_exit_status" ]; then
-        intended_exit_status=9
+        intended_exit_status=$previous_command_exit_status
     fi
     if [ $previous_command_exit_status != 0 ] ; then
         exit_safe $intended_exit_status "$error_message"
@@ -33,7 +36,9 @@ function assert_success {
 
 function assert_current_branch_name {
     local expected_branch_name=$1
-    local current_branch_name=`git rev-parse --abbrev-ref HEAD`
+    local current_branch_name
+    current_branch_name=`git rev-parse --abbrev-ref HEAD`
+    assert_success
     if [ $current_branch_name != $expected_branch_name ] ; then
         exit_safe 3 "Expected to be on $expected_branch_name, got $current_branch_name"
     fi
@@ -48,8 +53,13 @@ function assert_clean_copy {
 # Check that $branch is up to date with its $ORIGIN_REMOTE, expects git fetch to be called previously
 function assert_branch_is_up_to_date {
     local branch=$1
-    local last_remote_commit=`git rev-parse $ORIGIN_REMOTE/$branch`
-    local last_local_commit=`git rev-parse $branch`
+    local last_remote_commit
+    last_remote_commit=`git rev-parse $ORIGIN_REMOTE/$branch --`
+    assert_success
+    local last_local_commit
+    last_local_commit=`git rev-parse $branch --`
+    git rev-parse $branch --
+    assert_success
     if [ $last_remote_commit != $last_local_commit ]; then
         exit_safe 9 "Remote branch has different tip than local for branch '$branch'. \n\
         last_remote_commit = $last_remote_commit \n\
@@ -57,7 +67,6 @@ function assert_branch_is_up_to_date {
         "
     fi
 }
-
 
 # Check that current branch is $SOURCE_BRANCH, it is clean and up to date.
 # Also check that develop and master are up to date
@@ -77,7 +86,9 @@ function check_git_directories {
 }
 
 function check_release_tag_does_not_exist {
-    local found_tag=`git tag | grep $RELEASE_VERSION`
+    local found_tag
+    found_tag=`git tag | grep $RELEASE_VERSION`
+    assert_success
     if [ "$found_tag" == "$RELEASE_VERSION" ] ; then
         exit_safe 5 "Tag $RELEASE_VERSION already exists, not going to release."
     fi
@@ -136,7 +147,9 @@ function checkout_source_branch {
 
 function push_interactive {
     local args=$*
-    local current_branch_name=`git rev-parse --abbrev-ref HEAD`
+    local current_branch_name
+    current_branch_name=`git rev-parse --abbrev-ref HEAD`
+    assert_success
     echo "About to push '$current_branch_name': git push $args"
     git push $args
 }
