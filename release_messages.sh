@@ -18,3 +18,7 @@ function merge_release_branch_message {
     local branch_to_be_merged_to=$1
     echo "Merge branch '$RELEASE_BRANCH' into '$branch_to_be_merged_to'"
 }
+
+function create_release_candidate_message {
+    echo "Create new release candidate"
+}
