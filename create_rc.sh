@@ -17,8 +17,8 @@ source $DIR/io_changes.sh
 GIT_ROOT=`git rev-parse --show-toplevel`
 
 # checks start
-assert_version_ends_with "SNAPSHOT" $EXPECTED_CURRENT_VERSION
-assert_version_ends_with "SNAPSHOT" $FUTURE_DEVELOP_VERSION
+assert_version_ends_with $EXPECTED_CURRENT_VERSION "SNAPSHOT"
+assert_version_ends_with $FUTURE_DEVELOP_VERSION "SNAPSHOT"
 # check that we are on develop branch
 assert_current_branch_name develop
 check_git_directories
