@@ -54,11 +54,10 @@ function assert_clean_copy {
 function assert_branch_is_up_to_date {
     local branch=$1
     local last_remote_commit
-    last_remote_commit=`git rev-parse $ORIGIN_REMOTE/$branch --`
+    last_remote_commit=`git rev-parse $ORIGIN_REMOTE/$branch`
     assert_success
     local last_local_commit
-    last_local_commit=`git rev-parse $branch --`
-    git rev-parse $branch --
+    last_local_commit=`git rev-parse $branch`
     assert_success
     if [ $last_remote_commit != $last_local_commit ]; then
         exit_safe 9 "Remote branch has different tip than local for branch '$branch'. \n\
