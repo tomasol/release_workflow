@@ -1,3 +1,5 @@
+ORIGIN_REMOTE=origin
+
 function exit_safe {
     local exit_status=$1
     local exit_message=$2

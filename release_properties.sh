@@ -1,4 +1,3 @@
-ORIGIN_REMOTE=origin
 EXPECTED_CURRENT_VERSION="2.21.0-SNAPSHOT"
 # hotfix branch does not have to exist
 #HOTFIX_BRANCH="2.19.x"
