@@ -20,7 +20,7 @@ GIT_ROOT=`git rev-parse --show-toplevel`
 # chek that we are on develop branch
 assert_current_branch_name develop
 check_git_directories
-check_current_version $EXPECTED_CURRENT_VERSION
+io_check_current_version $EXPECTED_CURRENT_VERSION
 
 #TODO
 check_rc_branch # it must have been pushed, in current state
