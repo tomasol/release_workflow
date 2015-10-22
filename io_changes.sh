@@ -1,6 +1,6 @@
-#!/bin/bash
+# place for project specific io changes (bumping pom versions..)
 
-function check_current_version {
+function io_check_current_version {
     local expected_version=$1
     local xpath='/*[local-name()="project"]/*[local-name()="version"]/text()'
     local actual_version=`xmllint --xpath "$xpath" $GIT_ROOT/maven/pom.xml`
@@ -9,41 +9,37 @@ function check_current_version {
     fi
 }
 
-function check_compile {
-    cd $GIT_ROOT/maven
-    mvn clean verify
-}
-
 function io_create_release {
     assert_current_branch_name $RELEASE_BRANCH
     local new_version=$RELEASE_VERSION
-    update_versions $new_version
+    _update_versions $new_version
     echo remove_version_snapshot $new_version
-    remove_version_snapshot $new_version
+    _remove_version_snapshot $new_version
 }
 
 function io_future_develop {
     assert_current_branch_name $RELEASE_BRANCH
     local new_version=$FUTURE_DEVELOP_VERSION
-    update_versions $new_version
+    _update_versions $new_version
     echo add_version_snapshot $new_version
-    add_version_snapshot $new_version $RELEASE_VERSION
+    _add_version_snapshot $new_version $RELEASE_VERSION
 }
 
-function update_versions {
+function io_hotfix_changes {
+    assert_current_branch_name $HOTFIX_BRANCH
+    _update_versions "${FUTURE_HOTFIX_VERSION}"
+    _add_version_snapshot $FUTURE_HOTFIX_VERSION $RELEASE_VERSION
+}
+
+# private
+
+function _update_versions {
     local new_version=$1
     cd $GIT_ROOT/maven
     mvn -o versions:set -DnewVersion=$new_version versions:commit
 }
 
-function io_hotfix_changes {
-    assert_current_branch_name $HOTFIX_BRANCH
-    update_versions "${FUTURE_HOTFIX_VERSION}"
-    add_version_snapshot $FUTURE_HOTFIX_VERSION $RELEASE_VERSION
-}
-
-# private
-function remove_version_snapshot {
+function _remove_version_snapshot {
     local expected_rpm_version=$1
     cd $GIT_ROOT/maven
     # rpm.version should be set already to $new_version
@@ -55,7 +51,7 @@ function remove_version_snapshot {
 }
 
 # private
-function add_version_snapshot {
+function _add_version_snapshot {
     local future_version=$1
     local expected_rpm_version=$2
     cd $GIT_ROOT/maven
