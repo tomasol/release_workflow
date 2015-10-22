@@ -67,6 +67,22 @@ function assert_branch_is_up_to_date {
     fi
 }
 
+function assert_version_ends_with {
+    local value=$1
+    local snapshot_or_zero=$2 # only "SNAPSHOT" or '0' are valid
+    if [ $snapshot_or_zero == "SNAPSHOT" ] ; then
+      echo $value | grep '\-SNAPSHOT$' > /dev/null
+      assert_success "assert_version_ends_with: Wrong value $value for validation parameter $snapshot_or_zero"
+    elif [ $snapshot_or_zero == "0" ] ; then
+      echo $value | grep '\-' > /dev/null
+      if [ $? != "1" ] ; then
+        exit_safe 1 "assert_version_ends_with: Wrong value $value for validation parameter $snapshot_or_zero"
+      fi
+    else
+      exit_safe 1 "assert_version_ends_with: Invalid parameter $1, expected SNAPSHOT or 0"
+    fi
+}
+
 # Check that current branch is $SOURCE_BRANCH, it is clean and up to date.
 # Also check that develop and master are up to date
 function check_git_directories {
