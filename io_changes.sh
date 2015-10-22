@@ -1,5 +1,6 @@
 function io_check_current_version {
-    _io_check_current_version
+    local expected_version=$1
+    _io_check_current_version $expected_version
 }
 
 function io_create_release {
