@@ -20,5 +20,5 @@ function merge_release_branch_message {
 }
 
 function create_release_candidate_message {
-    echo "Create new release candidate"
+    echo "Create new release candidate from $EXPECTED_CURRENT_VERSION"
 }
