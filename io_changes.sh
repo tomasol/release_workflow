@@ -1,4 +1,4 @@
-#!/bin/bash
+# place for project specific io changes (bumping pom versions..)
 
 function check_current_version {
     local expected_version=$1
@@ -7,11 +7,6 @@ function check_current_version {
     if [ $actual_version != $expected_version ] ; then
         exit_safe 99 "Unexpected version $actual_version , expected was $expected_version"
     fi
-}
-
-function check_compile {
-    cd $GIT_ROOT/maven
-    mvn clean verify
 }
 
 function io_create_release {

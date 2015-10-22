@@ -1,5 +1,3 @@
-#!/bin/bash
-
 function exit_safe {
     local exit_status=$1
     local exit_message=$2
@@ -9,7 +7,13 @@ function exit_safe {
     if [ -n "$exit_message" ]; then
         echo -e "$exit_message"
     fi
-    exit 1
+    local path_to_bash=`which bash`
+    if [ "$path_to_bash" == $0 ]; then
+      echo "Not exitting with status code $exit_status. Press Ctrl-C to stop, Ctrl-D to ignore and continue"
+      cat
+    else
+      exit $exit_status
+    fi
 }
 
 function assert_success {
@@ -38,7 +42,7 @@ function assert_current_branch_name {
 # Local changes or adding files to staging area will fail this test
 function assert_clean_copy {
     git status | grep "nothing to commit" > /dev/null 2>&1;
-    assert_success "Expected this local branch to be clean"
+    assert_success "Please commit and push local changes"
 }
 
 # Check that $branch is up to date with its $ORIGIN_REMOTE, expects git fetch to be called previously
@@ -69,6 +73,7 @@ function check_git_directories {
     assert_branch_is_up_to_date $SOURCE_BRANCH
     assert_branch_is_up_to_date develop
     assert_branch_is_up_to_date master
+    assert_branch_is_up_to_date rc
 }
 
 function check_release_tag_does_not_exist {

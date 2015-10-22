@@ -1,5 +1,3 @@
-#!/bin/bash
-
 function tag_message {
     echo "TBO Services release $RELEASE_VERSION."
 }

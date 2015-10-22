@@ -1,6 +1,6 @@
 #!/bin/bash
-
 set -x
+
 # Before running this script edit release_properties.sh,
 # update your master, develop and possibly hotfix branch.
 # Switch to $SOURCE_BRANCH, otherwise this script will exit prematurely.
@@ -20,14 +20,12 @@ check_release_tag_does_not_exist
 check_current_version $EXPECTED_CURRENT_VERSION
 create_release_branch
 io_create_release
-check_compile
 commit_changes "$(create_release_message)"
 merge_release_branch_to "master"
 tag_and_push_master
 
 checkout_release_branch
 io_future_develop
-check_compile
 commit_changes "$(bump_to_future_develop_message)"
 merge_release_branch_to "develop"
 push_develop_and_delete_release_branch
