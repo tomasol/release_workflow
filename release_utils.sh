@@ -1,5 +1,3 @@
-ORIGIN_REMOTE=origin
-
 function exit_safe {
     local exit_status=$1
     local exit_message=$2
@@ -53,11 +51,11 @@ function assert_clean_copy {
     set -e
 }
 
-# Check that $branch is up to date with its $ORIGIN_REMOTE, expects git fetch to be called previously
+# Check that $branch is up to date with its origin, expects git fetch to be called previously
 function assert_branch_is_up_to_date {
     local branch=$1
     local last_remote_commit
-    last_remote_commit=`git rev-parse $ORIGIN_REMOTE/$branch`
+    last_remote_commit=`git rev-parse origin/$branch`
     local last_local_commit
     last_local_commit=`git rev-parse $branch`
     if [ $last_remote_commit != $last_local_commit ]; then
@@ -95,7 +93,7 @@ function check_git_directories {
         exit_safe 1 "No git root found."
     fi
     echo "Git root found: $GIT_ROOT"
-    git fetch $ORIGIN_REMOTE
+    git fetch origin
     # local branch should be $SOURCE_BRANCH
     assert_current_branch_name $SOURCE_BRANCH
     assert_clean_copy
@@ -131,29 +129,12 @@ function merge_release_branch_to {
 function tag_and_push_master {
     git tag -a $RELEASE_VERSION -m "$(tag_message)"
     push
-    push --tags $ORIGIN_REMOTE
-}
-
-function checkout_release_branch {
-    git checkout $RELEASE_BRANCH
-}
-
-function push_develop_and_delete_release_branch {
-    push $ORIGIN_REMOTE develop
-    git branch -d $RELEASE_BRANCH
+    push --tags origin
 }
 
 function checkout_hotfix_branch_from_master {
     git checkout master
     git checkout -B $HOTFIX_BRANCH
-}
-
-function push_hotfix_branch {
-    push $ORIGIN_REMOTE $HOTFIX_BRANCH
-}
-
-function checkout_source_branch {
-    git checkout $SOURCE_BRANCH
 }
 
 function push {

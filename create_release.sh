@@ -9,7 +9,9 @@ set -xe
 # 2. bump version to $RELEASE_VERSION
 # 3. commit to release branch, then merge it into master
 # 4. merge release into develop, with expected develop version
-# 5. create hotfix branch from master
+# 5. merge release into rc, with expected rc version (only if releasing from hotfix)
+# 6. delete temporary release branch
+# 7. create hotfix branch from master
 
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
@@ -23,12 +25,19 @@ GIT_ROOT=`git rev-parse --show-toplevel`
 
 # checks start
 assert_version_ends_with $EXPECTED_CURRENT_VERSION "SNAPSHOT"
-assert_version_ends_with $FUTURE_DEVELOP_VERSION "SNAPSHOT"
+assert_version_ends_with $EXPECTED_DEVELOP_VERSION "SNAPSHOT"
 assert_version_ends_with $FUTURE_HOTFIX_VERSION "SNAPSHOT"
 assert_version_ends_with $RELEASE_VERSION "0"
 check_git_directories
 check_release_tag_does_not_exist
 io_check_current_version $EXPECTED_CURRENT_VERSION
+git checkout develop
+io_check_current_version $EXPECTED_DEVELOP_VERSION
+if [ $SOURCE_BRANCH != "rc" ] ; then
+    git checkout rc
+    io_check_current_version $EXPECTED_RC_VERSION
+fi
+git checkout $SOURCE_BRANCH
 # checks end
 
 # 1.
@@ -38,14 +47,24 @@ commit_changes "$(create_release_message)"
 merge_release_branch_to "master"
 tag_and_push_master
 # 4.
-checkout_release_branch
-io_future_develop
-commit_changes "$(bump_to_future_develop_message)"
+git checkout $RELEASE_BRANCH
+io_from_release_to_snapshot $EXPECTED_DEVELOP_VERSION
+commit_changes "$(bump_to_message $EXPECTED_DEVELOP_VERSION)"
 merge_release_branch_to "develop"
-push_develop_and_delete_release_branch
+push origin develop
 # 5.
+if [ $SOURCE_BRANCH != "rc" ] ; then
+    git checkout $RELEASE_BRANCH
+    io_from_release_to_snapshot $EXPECTED_RC_VERSION
+    commit_changes "$(bump_to_message $EXPECTED_RC_VERSION)"
+    merge_release_branch_to "develop"
+    push origin rc
+fi
+# 7.
+git branch -d $RELEASE_BRANCH
+# 6.
 checkout_hotfix_branch_from_master
 io_hotfix_changes
-commit_changes "$(bump_to_future_hotfix_message)"
-push_hotfix_branch
-checkout_source_branch
+commit_changes "$(bump_to_message $FUTURE_HOTFIX_VERSION)"
+push origin $HOTFIX_BRANCH
+git checkout $SOURCE_BRANCH
