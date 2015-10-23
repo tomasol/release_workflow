@@ -55,14 +55,16 @@ push origin develop
 # 5.
 if [ $SOURCE_BRANCH != "rc" ] ; then
     git checkout $RELEASE_BRANCH
+    # clean bumping commit from $RELEASE BRANCH
+    git reset --hard HEAD~1
     io_from_release_to_snapshot $EXPECTED_RC_VERSION
     commit_changes "$(bump_to_message $EXPECTED_RC_VERSION)"
-    merge_release_branch_to "develop"
+    merge_release_branch_to "rc"
     push origin rc
 fi
-# 7.
-git branch -d $RELEASE_BRANCH
 # 6.
+git branch -d $RELEASE_BRANCH
+# 7.
 checkout_hotfix_branch_from_master
 io_hotfix_changes
 commit_changes "$(bump_to_message $FUTURE_HOTFIX_VERSION)"
