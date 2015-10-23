@@ -12,13 +12,13 @@ set -xe
 # 5. commit to develop
 
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+GIT_ROOT=`git rev-parse --show-toplevel`
 
 source $DIR/create_rc_properties.sh
 source $DIR/release_messages.sh
 source $DIR/release_utils.sh
 source $DIR/io_changes.sh
 
-GIT_ROOT=`git rev-parse --show-toplevel`
 
 # checks start
 assert_version_ends_with $EXPECTED_CURRENT_VERSION "SNAPSHOT"

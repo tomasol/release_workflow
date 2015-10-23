@@ -14,6 +14,7 @@ set -xe
 # 7. create hotfix branch from master
 
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+GIT_ROOT=`git rev-parse --show-toplevel`
 
 source $DIR/create_release_properties.sh
 source $DIR/release_messages.sh
@@ -21,7 +22,6 @@ source $DIR/release_utils.sh
 source $DIR/io_changes.sh
 
 RELEASE_BRANCH="release/$RELEASE_VERSION"
-GIT_ROOT=`git rev-parse --show-toplevel`
 
 # checks start
 assert_version_ends_with $EXPECTED_CURRENT_VERSION "SNAPSHOT"
