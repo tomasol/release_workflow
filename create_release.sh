@@ -73,3 +73,4 @@ io_hotfix_changes
 commit_changes "$(bump_to_message $FUTURE_HOTFIX_VERSION)"
 push origin $HOTFIX_BRANCH
 git checkout $SOURCE_BRANCH
+echo "Done"

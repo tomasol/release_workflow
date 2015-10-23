@@ -38,3 +38,4 @@ git checkout develop
 io_bump_develop_after_rc
 commit_changes "$(bump_to_message $FUTURE_DEVELOP_VERSION)"
 git push
+echo "Done"
