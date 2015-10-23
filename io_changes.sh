@@ -39,7 +39,8 @@ function io_bump_develop_after_rc {
 function _io_check_current_version {
     local expected_version=$1
     local xpath='/*[local-name()="project"]/*[local-name()="version"]/text()'
-    local actual_version=`xmllint --xpath "$xpath" $GIT_ROOT/maven/pom.xml`
+    local actual_version
+    actual_version=`xmllint --xpath "$xpath" $GIT_ROOT/maven/pom.xml`
     if [ $actual_version != $expected_version ] ; then
         exit_safe 99 "Unexpected version $actual_version , expected was $expected_version"
     fi
