@@ -9,12 +9,13 @@ function io_create_release {
     _modify_version ${EXPECTED_CURRENT_VERSION%-SNAPSHOT} "SNAPSHOT" $RELEASE_VERSION "0"
 }
 
-function io_future_develop {
+function io_from_release_to_snapshot {
+    local future_snapshot_version=$1
     assert_current_branch_name $RELEASE_BRANCH
     assert_version_ends_with $RELEASE_VERSION "0"
-    assert_version_ends_with $FUTURE_DEVELOP_VERSION "SNAPSHOT"
+    assert_version_ends_with $future_snapshot_version "SNAPSHOT"
 
-    _modify_version $RELEASE_VERSION "0" ${FUTURE_DEVELOP_VERSION%-SNAPSHOT} "SNAPSHOT"
+    _modify_version $RELEASE_VERSION "0" ${future_snapshot_version%-SNAPSHOT} "SNAPSHOT"
 }
 
 function io_hotfix_changes {
