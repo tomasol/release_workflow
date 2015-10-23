@@ -22,15 +22,16 @@ RELEASE_BRANCH="release/$RELEASE_VERSION"
 GIT_ROOT=`git rev-parse --show-toplevel`
 
 # checks start
-assert_version_ends_with EXPECTED_CURRENT_VERSION "SNAPSHOT"
+assert_version_ends_with $EXPECTED_CURRENT_VERSION "SNAPSHOT"
 assert_version_ends_with $FUTURE_DEVELOP_VERSION "SNAPSHOT"
-assert_version_ends_with FUTURE_HOTFIX_VERSION "SNAPSHOT"
+assert_version_ends_with $FUTURE_HOTFIX_VERSION "SNAPSHOT"
 assert_version_ends_with $RELEASE_VERSION "0"
 check_git_directories
 check_release_tag_does_not_exist
-check_current_version $EXPECTED_CURRENT_VERSION
+io_check_current_version $EXPECTED_CURRENT_VERSION
 # checks end
 
+# 1.
 git checkout -b $RELEASE_BRANCH
 io_create_release
 commit_changes "$(create_release_message)"

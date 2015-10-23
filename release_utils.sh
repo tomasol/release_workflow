@@ -107,10 +107,12 @@ function check_git_directories {
 
 function check_release_tag_does_not_exist {
     local found_tag
+    set +e
     found_tag=`git tag | grep $RELEASE_VERSION`
     if [ "$found_tag" == "$RELEASE_VERSION" ] ; then
         exit_safe 5 "Tag $RELEASE_VERSION already exists, not going to release."
     fi
+    set -e
 }
 
 function commit_changes() {
