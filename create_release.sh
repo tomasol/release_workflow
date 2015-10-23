@@ -8,8 +8,8 @@ set -xe
 # 1. create temporary release branch with name release/$RELEASE_VERSION
 # 2. bump version to $RELEASE_VERSION
 # 3. commit to release branch, then merge it into master
-# 4. merge release into develop, with expected develop version
-# 5. merge release into rc, with expected rc version (only if releasing from hotfix)
+# 4. merge release into rc, with expected rc version (only if releasing from hotfix)
+# 5. merge release (with changes to rc) into develop, with expected develop version
 # 6. delete temporary release branch
 # 7. create hotfix branch from master
 
@@ -47,21 +47,24 @@ commit_changes "$(create_release_message)"
 merge_release_branch_to "master"
 tag_and_push_master
 # 4.
-git checkout $RELEASE_BRANCH
-io_from_release_to_snapshot $EXPECTED_DEVELOP_VERSION
-commit_changes "$(bump_to_message $EXPECTED_DEVELOP_VERSION)"
-merge_release_branch_to "develop"
-push origin develop
-# 5.
 if [ $SOURCE_BRANCH != "rc" ] ; then
     git checkout $RELEASE_BRANCH
-    # clean bumping commit from $RELEASE BRANCH
-    git reset --hard HEAD~1
-    io_from_release_to_snapshot $EXPECTED_RC_VERSION
+    modify_version $RELEASE_VERSION "0" ${EXPECTED_RC_VERSION%-SNAPSHOT} "SNAPSHOT"
     commit_changes "$(bump_to_message $EXPECTED_RC_VERSION)"
     merge_release_branch_to "rc"
     push origin rc
 fi
+# 5.
+git checkout $RELEASE_BRANCH
+if [ $SOURCE_BRANCH != "rc" ] ; then
+    # rc version should be expected
+    modify_version ${EXPECTED_RC_VERSION%-SNAPSHOT} "SNAPSHOT" ${EXPECTED_DEVELOP_VERSION%-SNAPSHOT} "SNAPSHOT"
+else
+    modify_version $RELEASE_VERSION "0" ${EXPECTED_DEVELOP_VERSION%-SNAPSHOT} "SNAPSHOT"
+fi
+commit_changes "$(bump_to_message $EXPECTED_DEVELOP_VERSION)"
+merge_release_branch_to "develop"
+push origin develop
 # 6.
 git branch -d $RELEASE_BRANCH
 # 7.
