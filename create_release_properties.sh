@@ -4,11 +4,10 @@ HOTFIX_BRANCH="2.22.x"
 SOURCE_BRANCH="rc"
 # EXPECTED_CURRENT_VERSION must be equal to current $SOURCE_BRANCH version
 EXPECTED_CURRENT_VERSION="2.22.0-SNAPSHOT"
-
+# current develop version
 EXPECTED_DEVELOP_VERSION="2.23.0-SNAPSHOT"
-
+# EXPECTED_RC_VERSION must be set only if creating hotfix release
 EXPECTED_RC_VERSION=...
-
 # next hotfix version, do not forget to add -SNAPSHOT here:
 FUTURE_HOTFIX_VERSION="2.22.1-SNAPSHOT"
 
