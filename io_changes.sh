@@ -15,7 +15,7 @@ function io_future_develop {
     assert_version_ends_with $FUTURE_DEVELOP_VERSION "SNAPSHOT"
 
     _modify_version $RELEASE_VERSION "0" ${FUTURE_DEVELOP_VERSION%-SNAPSHOT} "SNAPSHOT"
-#}
+}
 
 function io_hotfix_changes {
     assert_current_branch_name $HOTFIX_BRANCH
@@ -58,10 +58,12 @@ function _modify_version {
     # checks
     _io_check_current_version $expected_maven_version
     local pom_path=$GIT_ROOT/maven/pom.xml
+    set +e
     egrep "<rpm.version>$expected_version_core</rpm.version>" $pom_path
     assert_success "Expected $expected_version_core inside rpm.version tag"
     egrep "<rpm.release>$expected_rpm_release<\/rpm.release>" $pom_path
     assert_success "Expected $expected_rpm_release inside rpm.release tag"
+    set -e
 
     # replace rpm version
     sed -i "s/<rpm.version>$expected_version_core<\/rpm.version>/<rpm.version>$future_version_core<\/rpm.version>/" $pom_path

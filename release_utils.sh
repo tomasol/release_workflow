@@ -40,7 +40,6 @@ function assert_current_branch_name {
     local expected_branch_name=$1
     local current_branch_name
     current_branch_name=`git rev-parse --abbrev-ref HEAD`
-    assert_success
     if [ $current_branch_name != $expected_branch_name ] ; then
         exit_safe 3 "Expected to be on $expected_branch_name, got $current_branch_name"
     fi
@@ -48,8 +47,10 @@ function assert_current_branch_name {
 
 # Local changes or adding files to staging area will fail this test
 function assert_clean_copy {
+    set +e
     git status | grep "nothing to commit" > /dev/null 2>&1;
     assert_success "Please commit and push local changes"
+    set -e
 }
 
 # Check that $branch is up to date with its $ORIGIN_REMOTE, expects git fetch to be called previously
@@ -57,10 +58,8 @@ function assert_branch_is_up_to_date {
     local branch=$1
     local last_remote_commit
     last_remote_commit=`git rev-parse $ORIGIN_REMOTE/$branch`
-    assert_success
     local last_local_commit
     last_local_commit=`git rev-parse $branch`
-    assert_success
     if [ $last_remote_commit != $last_local_commit ]; then
         exit_safe 9 "Remote branch has different tip than local for branch '$branch'. \n\
         last_remote_commit = $last_remote_commit \n\
@@ -73,15 +72,19 @@ function assert_version_ends_with {
     local value=$1
     local snapshot_or_zero=$2 # only "SNAPSHOT" or '0' are valid
     if [ $snapshot_or_zero == "SNAPSHOT" ] ; then
-      echo $value | grep '\-SNAPSHOT$' > /dev/null
-      assert_success "assert_version_ends_with: Wrong value $value for validation parameter $snapshot_or_zero"
+        set +e
+        echo $value | grep '\-SNAPSHOT$' > /dev/null
+        assert_success "assert_version_ends_with: Wrong value $value for validation parameter $snapshot_or_zero"
+        set -e
     elif [ $snapshot_or_zero == "0" ] ; then
-      echo $value | grep '\-' > /dev/null
-      if [ $? != "1" ] ; then
-        exit_safe 1 "assert_version_ends_with: Wrong value $value for validation parameter $snapshot_or_zero"
-      fi
+        set +e
+        echo $value | grep '\-' > /dev/null
+        if [ $? != "1" ] ; then
+            exit_safe 1 "assert_version_ends_with: Wrong value $value for validation parameter $snapshot_or_zero"
+        fi
+        set -e
     else
-      exit_safe 1 "assert_version_ends_with: Invalid parameter $1, expected SNAPSHOT or 0"
+        exit_safe 1 "assert_version_ends_with: Invalid parameter $1, expected SNAPSHOT or 0"
     fi
 }
 
@@ -105,15 +108,9 @@ function check_git_directories {
 function check_release_tag_does_not_exist {
     local found_tag
     found_tag=`git tag | grep $RELEASE_VERSION`
-    assert_success
     if [ "$found_tag" == "$RELEASE_VERSION" ] ; then
         exit_safe 5 "Tag $RELEASE_VERSION already exists, not going to release."
     fi
-}
-
-function create_release_branch {
-    git checkout -b $RELEASE_BRANCH
-    assert_success "Failed to create '$RELEASE_BRANCH' branch" 1
 }
 
 function commit_changes() {
@@ -127,15 +124,12 @@ function merge_release_branch_to {
     local branch_to_be_merged_to=$1
     git checkout $branch_to_be_merged_to
     git merge --no-ff $RELEASE_BRANCH -m "$(merge_release_branch_message $branch_to_be_merged_to)"
-    assert_success
 }
 
 function tag_and_push_master {
     git tag -a $RELEASE_VERSION -m "$(tag_message)"
-    push_interactive
-    assert_success
-    push_interactive --tags $ORIGIN_REMOTE
-    assert_success
+    push
+    push --tags $ORIGIN_REMOTE
 }
 
 function checkout_release_branch {
@@ -143,8 +137,7 @@ function checkout_release_branch {
 }
 
 function push_develop_and_delete_release_branch {
-    push_interactive $ORIGIN_REMOTE develop
-    assert_success
+    push $ORIGIN_REMOTE develop
     git branch -d $RELEASE_BRANCH
 }
 
@@ -154,19 +147,17 @@ function checkout_hotfix_branch_from_master {
 }
 
 function push_hotfix_branch {
-    push_interactive $ORIGIN_REMOTE $HOTFIX_BRANCH
-    assert_success
+    push $ORIGIN_REMOTE $HOTFIX_BRANCH
 }
 
 function checkout_source_branch {
     git checkout $SOURCE_BRANCH
 }
 
-function push_interactive {
+function push {
     local args=$*
     local current_branch_name
     current_branch_name=`git rev-parse --abbrev-ref HEAD`
-    assert_success
     echo "About to push '$current_branch_name': git push $args"
     git push $args
 }

@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+set -xe
 
 # Branches $SOURCE_BRANCH,develop, rc, master must exist and be up to date.
 # This script must be run from $SOURCE_BRANCH.

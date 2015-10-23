@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+set -xe
 
 # Branches $SOURCE_BRANCH,develop, rc, master must exist and be up to date.
 # This script must be run from $SOURCE_BRANCH.
@@ -31,7 +31,7 @@ check_release_tag_does_not_exist
 check_current_version $EXPECTED_CURRENT_VERSION
 # checks end
 
-create_release_branch
+git checkout -b $RELEASE_BRANCH
 io_create_release
 commit_changes "$(create_release_message)"
 merge_release_branch_to "master"
