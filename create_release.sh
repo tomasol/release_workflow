@@ -31,6 +31,7 @@ check_release_tag_does_not_exist
 check_current_version $EXPECTED_CURRENT_VERSION
 # checks end
 
+# 1.
 git checkout -b $RELEASE_BRANCH
 io_create_release
 commit_changes "$(create_release_message)"
