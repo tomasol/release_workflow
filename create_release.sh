@@ -62,9 +62,9 @@ if [ $SOURCE_BRANCH != "rc" ] ; then
     merge_release_branch_to "rc"
     push origin rc
 fi
-# 7.
-git branch -d $RELEASE_BRANCH
 # 6.
+git branch -d $RELEASE_BRANCH
+# 7.
 checkout_hotfix_branch_from_master
 io_hotfix_changes
 commit_changes "$(bump_to_message $FUTURE_HOTFIX_VERSION)"
