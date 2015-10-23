@@ -5,6 +5,7 @@ function io_check_current_version {
 
 function io_create_release {
     assert_current_branch_name $RELEASE_BRANCH
+
     _modify_version $RELEASE_BRANCH "SNAPSHOT" $RELEASE_BRANCH "0"
 }
 
@@ -14,7 +15,7 @@ function io_future_develop {
     assert_version_ends_with $FUTURE_DEVELOP_VERSION "SNAPSHOT"
 
     _modify_version $RELEASE_VERSION "0" ${FUTURE_DEVELOP_VERSION%-SNAPSHOT} "SNAPSHOT"
-}
+#}
 
 function io_hotfix_changes {
     assert_current_branch_name $HOTFIX_BRANCH
