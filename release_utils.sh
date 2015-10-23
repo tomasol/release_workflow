@@ -1,3 +1,5 @@
+ORIGIN_REMOTE=origin
+
 function exit_safe {
     local exit_status=$1
     local exit_message=$2
@@ -96,8 +98,8 @@ function check_git_directories {
     assert_clean_copy
     assert_branch_is_up_to_date $SOURCE_BRANCH
     assert_branch_is_up_to_date develop
-    assert_branch_is_up_to_date master
     assert_branch_is_up_to_date rc
+    assert_branch_is_up_to_date master
 }
 
 function check_release_tag_does_not_exist {

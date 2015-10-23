@@ -1,15 +1,19 @@
-!#/bin/bash
+#!/bin/bash
 set -x
 
-# inputs:
-# SOURCE_BRANCH must be set to develop
-# EXPECTED_CURRENT_VERSION must be equal to current develop version
-# FUTURE_DEVELOP_VERSION
-# develop, rc branch must exist and be up to date
+# Branches $SOURCE_BRANCH,develop, rc, master must exist and be up to date.
+# This script must be run from $SOURCE_BRANCH.
+# Before running this script edit create_rc_properties.sh
+# Description:
+# 1. switch from develop to rc
+# 2. merge develop into rc
+# 3. switch to develop,
+# 4. bump version to FUTURE_DEVELOP_VERSION
+# 5. commit to develop
 
 DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
 
-source $DIR/release_properties.sh
+source $DIR/create_rc_properties.sh
 source $DIR/release_messages.sh
 source $DIR/release_utils.sh
 source $DIR/io_changes.sh
