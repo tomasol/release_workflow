@@ -22,9 +22,9 @@ RELEASE_BRANCH="release/$RELEASE_VERSION"
 GIT_ROOT=`git rev-parse --show-toplevel`
 
 # checks start
-assert_version_ends_with EXPECTED_CURRENT_VERSION "SNAPSHOT"
+assert_version_ends_with $EXPECTED_CURRENT_VERSION "SNAPSHOT"
 assert_version_ends_with $FUTURE_DEVELOP_VERSION "SNAPSHOT"
-assert_version_ends_with FUTURE_HOTFIX_VERSION "SNAPSHOT"
+assert_version_ends_with $FUTURE_HOTFIX_VERSION "SNAPSHOT"
 assert_version_ends_with $RELEASE_VERSION "0"
 check_git_directories
 check_release_tag_does_not_exist
